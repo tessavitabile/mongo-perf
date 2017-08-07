@@ -419,6 +419,35 @@ addTestCase({
     }
 });
 
+/**
+ * Large array used for large $in queries in UnindexedLargeIn.
+ */
+var largeArray = [];
+for (var i = 0; i < 1000; i++) {
+    largeArray.push(i);
+}
+
+/**
+ * Setup: Create a collection and insert a small number of documents with an integer field x.
+ *
+ * Test: Issue queries that must perform a collection scan, filtering the documents with an $in
+ * predicate with a large number of elements.
+ */
+addTestCase({
+    name: "UnindexedLargeIn",
+    tags: ["regression"],
+    nDocs: 10,
+    docs: function(i) {
+        return {x: i * 100};
+    },
+    op: {
+        op: "find",
+        query: {
+            $query: {x: {$in: largeArray}},
+        }
+    }
+});
+
 // Projection tests.
 
 /**
