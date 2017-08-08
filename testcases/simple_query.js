@@ -438,10 +438,12 @@ for (var i = 0; i < 1000; i++) {
  */
 addTestCase({
     name: "UnindexedLargeInMatching",
-    tags: ["regression"],
-    nDocs: 10,
-    docs: function(i) {
-        return {x: 2 * {"#RAND_INT_PLUS_THREAD": [0, 1000]}};
+    tags: ["query", "regression"],
+    pre: function(collection) {
+        Random.setRandomSeed(258);
+        for (var i = 0; i < 10; i++) {
+            collection.insert({x: 2 * Random.randInt(1000)});
+        }
     },
     op: {
         op: "find",
@@ -461,10 +463,12 @@ addTestCase({
  */
 addTestCase({
     name: "UnindexedLargeInNonMatching",
-    tags: ["regression"],
-    nDocs: 10,
-    docs: function(i) {
-        return {x: 2 * {"#RAND_INT_PLUS_THREAD": [0, 1000]} + 1};
+    tags: ["query", "regression"],
+    pre: function(collection) {
+        Random.setRandomSeed(258);
+        for (var i = 0; i < 10; i++) {
+            collection.insert({x: 2 * Random.randInt(1000) + 1});
+        }
     },
     op: {
         op: "find",
