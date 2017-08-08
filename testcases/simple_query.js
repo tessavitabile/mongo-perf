@@ -420,25 +420,51 @@ addTestCase({
 });
 
 /**
- * Large array used for large $in queries in UnindexedLargeIn.
+ * Large array used for large $in queries in UnindexedLargeInMatching and
+ * UnindexedLargeInNonMatching containing all even integers in the range [0, 2000).
  */
 var largeArray = [];
 for (var i = 0; i < 1000; i++) {
-    largeArray.push(i);
+    largeArray.push(i * 2);
 }
 
 /**
- * Setup: Create a collection and insert a small number of documents with an integer field x.
+ * Setup: Create a collection and insert a small number of documents with a random even integer
+ * field x in the range [0, 2000).
  *
  * Test: Issue queries that must perform a collection scan, filtering the documents with an $in
- * predicate with a large number of elements.
+ * predicate with a large number of elements. All documents will match the predicate, since the $in
+ * array contains all even integers in the range [0, 2000).
  */
 addTestCase({
-    name: "UnindexedLargeIn",
+    name: "UnindexedLargeInMatching",
     tags: ["regression"],
     nDocs: 10,
     docs: function(i) {
-        return {x: i * 100};
+        return {x: 2 * {"#RAND_INT_PLUS_THREAD": [0, 1000]}};
+    },
+    op: {
+        op: "find",
+        query: {
+            $query: {x: {$in: largeArray}},
+        }
+    }
+});
+
+/**
+ * Setup: Create a collection and insert a small number of documents with a random odd integer
+ * field x in the range [0, 2000).
+ *
+ * Test: Issue queries that must perform a collection scan, filtering the documents with an $in
+ * predicate with a large number of elements. No documents will match the predicate, since the $in
+ * array contains all even integers in the range [0, 2000).
+ */
+addTestCase({
+    name: "UnindexedLargeInNonMatching",
+    tags: ["regression"],
+    nDocs: 10,
+    docs: function(i) {
+        return {x: 2 * {"#RAND_INT_PLUS_THREAD": [0, 1000]} + 1};
     },
     op: {
         op: "find",
