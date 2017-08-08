@@ -13,6 +13,8 @@ if (typeof(tests) !== "object") {
  */
 function collectionPopulator(isView, nDocs, indexes, docGenerator, collectionOptions) {
     return function(collectionOrView) {
+        Random.setRandomSeed(258);
+
         collectionOrView.drop();
 
         var db = collectionOrView.getDB();
@@ -438,12 +440,10 @@ for (var i = 0; i < 1000; i++) {
  */
 addTestCase({
     name: "UnindexedLargeInMatching",
-    tags: ["query", "regression"],
-    pre: function(collection) {
-        Random.setRandomSeed(258);
-        for (var i = 0; i < 10; i++) {
-            collection.insert({x: 2 * Random.randInt(1000)});
-        }
+    tags: ["regression"],
+    nDocs: 10,
+    docs: function(i) {
+        return {x: 2 * Random.randInt(1000)};
     },
     op: {
         op: "find",
@@ -463,12 +463,10 @@ addTestCase({
  */
 addTestCase({
     name: "UnindexedLargeInNonMatching",
-    tags: ["query", "regression"],
-    pre: function(collection) {
-        Random.setRandomSeed(258);
-        for (var i = 0; i < 10; i++) {
-            collection.insert({x: 2 * Random.randInt(1000) + 1});
-        }
+    tags: ["regression"],
+    nDocs: 10,
+    docs: function(i) {
+        return {x: 2 * Random.randInt(1000) + 1};
     },
     op: {
         op: "find",
