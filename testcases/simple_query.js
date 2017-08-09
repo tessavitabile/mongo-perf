@@ -447,9 +447,7 @@ addTestCase({
     },
     op: {
         op: "find",
-        query: {
-            $query: {x: {$in: largeArray}},
-        }
+        query: {x: {$in: largeArray}}
     }
 });
 
@@ -470,9 +468,7 @@ addTestCase({
     },
     op: {
         op: "find",
-        query: {
-            $query: {x: {$in: largeArray}},
-        }
+        query: {x: {$in: largeArray}}
     }
 });
 
